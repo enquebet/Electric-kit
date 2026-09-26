@@ -4,6 +4,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { SearchModal } from './components/search/SearchModal';
 import { FormulaBookView } from './components/formulas/FormulaBookView';
 import { TaxonomyExplorerView } from './components/taxonomy/TaxonomyExplorerView';
+import { WorkspaceView } from './workspace/WorkspaceView';
 
 import { OhmsLawTool } from './components/tools/OhmsLawTool';
 import { ElectricalPowerTool } from './components/tools/ElectricalPowerTool';
@@ -95,10 +96,10 @@ import { SystemDesignReviewTool } from './components/tools/SystemDesignReviewToo
 
 import { TOOLS_REGISTRY, getToolBySlug } from './data/registry';
 import { loadPreferences, savePreferences } from './lib/storage/local';
-import { Sparkles, ArrowRight, Share2, Check } from 'lucide-react';
+import { Sparkles, ArrowRight, Share2, Check, Briefcase } from 'lucide-react';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<'tool' | 'formulas' | 'taxonomy'>('tool');
+  const [activeView, setActiveView] = useState<'tool' | 'formulas' | 'taxonomy' | 'workspace'>('tool');
   const [activeToolId, setActiveToolId] = useState<string>('ohms-law');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -116,11 +117,17 @@ export default function App() {
         setActiveView('formulas');
       } else if (hash === 'taxonomy') {
         setActiveView('taxonomy');
+      } else if (hash === 'workspace') {
+        setActiveView('workspace');
       } else if (hash && getToolBySlug(hash)) {
         setActiveToolId(hash);
         setActiveView('tool');
-      } else if (prefs.recentToolIds && prefs.recentToolIds.length > 0) {
+      } else if (!hash && prefs.recentToolIds && prefs.recentToolIds.length > 0 && getToolBySlug(prefs.recentToolIds[0])) {
         setActiveToolId(prefs.recentToolIds[0]);
+        setActiveView('tool');
+      } else {
+        setActiveToolId('ohms-law');
+        setActiveView('tool');
       }
     };
 
@@ -145,6 +152,10 @@ export default function App() {
       title = "Engineering Taxonomy & Tool Explorer | ElectroKit";
       description = "Directory of 80+ specialized engineering calculators spanning circuits, power electronics, PCB design, RF, thermal, and embedded systems.";
       canonical += '#/taxonomy';
+    } else if (activeView === 'workspace') {
+      title = "Engineering Workspace & Intelligence Layer | ElectroKit";
+      description = "Unified hardware engineering workspace: design cases, deterministic calculation snapshots, margin audits, and hardware validation.";
+      canonical += '#/workspace';
     } else if (activeTool) {
       title = activeTool.seo?.title || `${activeTool.name} — Precision Calculator | ElectroKit`;
       description = activeTool.seo?.metaDescription || activeTool.description;
@@ -187,10 +198,11 @@ export default function App() {
     savePreferences({ recentToolIds: updatedRecents });
   };
 
-  const handleSelectView = (view: 'tool' | 'formulas' | 'taxonomy') => {
+  const handleSelectView = (view: 'tool' | 'formulas' | 'taxonomy' | 'workspace') => {
     setActiveView(view);
     if (view === 'formulas') window.location.hash = '#/formulas';
     else if (view === 'taxonomy') window.location.hash = '#/taxonomy';
+    else if (view === 'workspace') window.location.hash = '#/workspace';
     else window.location.hash = `#/${activeToolId}`;
   };
 
@@ -240,6 +252,10 @@ export default function App() {
 
           {activeView === 'taxonomy' && (
             <TaxonomyExplorerView onSelectTool={handleSelectTool} />
+          )}
+
+          {activeView === 'workspace' && (
+            <WorkspaceView />
           )}
 
           {activeView === 'tool' && (
@@ -295,6 +311,16 @@ export default function App() {
                         <span>Share</span>
                       </>
                     )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSelectView('workspace')}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-cyan-950/50 hover:bg-cyan-900/60 border border-cyan-800/60 text-cyan-300 transition-all cursor-pointer"
+                    title="Open Engineering Workspace"
+                  >
+                    <Briefcase className="w-3.5 h-3.5" />
+                    <span>Workspace</span>
                   </button>
                 </div>
               </div>
@@ -409,6 +435,7 @@ export default function App() {
                 {activeToolId === 'battery-system-design' && <BatterySystemDesignTool />}
                 {activeToolId === 'pcb-system-design' && <PcbSystemDesignTool />}
                 {activeToolId === 'system-design-review' && <SystemDesignReviewTool />}
+                {!TOOLS_REGISTRY.some(t => t.id === activeToolId) && <OhmsLawTool />}
               </div>
 
               {/* Related Tools Navigator */}

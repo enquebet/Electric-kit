@@ -1,4 +1,5 @@
 https://electrokit.dev/
+https://electrokit.dev/#/workspace
 https://electrokit.dev/#/formulas
 https://electrokit.dev/#/taxonomy
 https://electrokit.dev/#/ohms-law

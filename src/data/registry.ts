@@ -741,7 +741,7 @@ export const TOOLS_REGISTRY: ToolMetadata[] = [
     formulaSnippet: 'f_Nyquist = f_s / 2 | f_alias = |f_in - m·f_s|',
     keywords: ['nyquist theorem', 'sampling frequency', 'aliasing calculator', 'foldover frequency', 'nyquist rate', 'anti aliasing filter', 'dsp'],
     difficulty: 'Intermediate',
-    relatedToolIds: ['adc-dac', 'embedded-timing', 'rc-rl-filters'],
+    relatedToolIds: ['adc-dac', 'embedded-timing', 'analog-filters'],
     status: 'implemented',
     seo: {
       title: 'Sampling Frequency, Nyquist Rate & Aliasing Calculator | ElectroKit',

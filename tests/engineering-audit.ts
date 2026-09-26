@@ -261,6 +261,38 @@ import {
   globalWarningAggregator,
   globalTraceabilityRegister,
 } from '../src/engines/design';
+import {
+  createDefaultProject,
+  exportProjectToJson,
+  importProjectFromJson,
+} from '../src/workspace/storage';
+import {
+  addDesignCase,
+  setBaselineCase,
+  addScenario,
+  compareDesignCases,
+  createProjectRevision,
+} from '../src/workspace/case-manager';
+import {
+  createSnapshotFromCalculation,
+  recalculateSnapshot,
+} from '../src/workspace/snapshot-orchestrator';
+import {
+  addValidationItem,
+  updateValidationItem,
+  getValidationProgress,
+  addMeasurement,
+  compareMeasurementWithCalculated,
+  addManufacturerPart,
+  setManufacturerVerification,
+} from '../src/workspace/validation-tracker';
+import {
+  generateMarkdownReport,
+  generateReportSummary,
+} from '../src/workspace/report-generator';
+import {
+  runDeterministicOfflineReview,
+} from '../src/workspace/ai-intelligence';
 import { formatEngineeringNotation, formatSignificantFigures } from '../src/lib/units/formatter';
 import {
   toScientificNotation,
@@ -2860,6 +2892,126 @@ assert(designTaxonomy !== undefined && designTaxonomy.toolCount >= 6, 'Design/Ta
 const designFormulas = FORMULA_BOOK.filter(f => f.category === 'design');
 assert(designFormulas.length >= 6, 'Design/Formulas: At least 6 design formulas registered in Formula Book');
 assert(designFormulas.every(f => f.equationText.length > 5 && f.variables.length >= 3 && f.example.length > 10), 'Design/Formulas: Every design formula has valid equation, variables, and worked example');
+
+// 111. Phase 13 — Engineering Workspace & Intelligence Layer
+console.log('\n111. Phase 13 — Engineering Workspace & Intelligence Layer:');
+
+// Workspace/01: Project Creation & Schema Conformance
+const wsProj = createDefaultProject('dcdc-converter');
+assert(wsProj.schemaVersion === '1.0.0' && Boolean(wsProj.metadata.id) && wsProj.metadata.name.includes('DC-DC'), 'Workspace/01: Project creation initializes valid schema 1.0.0 with metadata');
+assert(wsProj.requirements.length >= 3 && wsProj.constraints.length >= 2, 'Workspace/02: Project templates seed requirements, constraints, and target specs');
+
+// Workspace/03: Project JSON Export & Import Round-Trip
+const projJson = exportProjectToJson(wsProj);
+const importRes = importProjectFromJson(projJson);
+assert(importRes.success && importRes.project !== undefined, 'Workspace/03: Project JSON export and import round-trip preserves valid project structure');
+assert(importRes.project?.requirements.length === wsProj.requirements.length, 'Workspace/04: Imported project preserves 100% of requirements and constraints');
+
+// Workspace/05: Design Case Management & Cloning
+const revBCase = addDesignCase(wsProj, 'Rev B - Optimized Inductor', 'Reduced DCR from 22mΩ to 12mΩ', wsProj.designCases[0].id);
+assert(wsProj.designCases.length === 2 && wsProj.activeCaseId === revBCase.id, 'Workspace/05: Case manager adds new design case and sets active ID');
+assert(setBaselineCase(wsProj, wsProj.designCases[0].id), 'Workspace/06: Case manager correctly sets and maintains baseline case reference');
+
+// Workspace/07: Scenario Management & Environmental Corners
+const hotScenario = addScenario(wsProj, revBCase.id, 'Worst-Case Hot (+70°C)', 'temperature', { ambientTempC: 70 });
+assert(wsProj.scenarios.some(s => s.id === hotScenario.id && s.type === 'temperature'), 'Workspace/07: Scenario manager registers corner scenarios with parameter overrides');
+
+// Workspace/08: Calculation Snapshot Orchestrator & Deterministic Execution
+const dcSnap = createSnapshotFromCalculation({
+  toolSlug: 'power-system-design',
+  engineId: 'dc-power-budget',
+  name: 'Main 5V Rail Power Budget',
+  category: 'power',
+  inputs: {
+    supplyVoltageVolts: 12,
+    supplyMaxPowerWatts: 40,
+    loads: [{ id: 'load1', name: 'Payload', voltageRailVolts: 12, nominalCurrentAmps: 2.5 }],
+  },
+  outputs: {},
+});
+const evalDcSnap = recalculateSnapshot(dcSnap);
+assert(evalDcSnap.outputs.totalLoadPowerWatts === 30 && evalDcSnap.margins.length > 0 && evalDcSnap.margins[0].isSatisfied, 'Workspace/08: Snapshot orchestrator deterministically calculates DC Power Budget using locked Phase 12 engine');
+
+// Workspace/09: Thermal Junction Chain Recalculation
+const thmSnap = createSnapshotFromCalculation({
+  toolSlug: 'thermal-system-design',
+  engineId: 'thermal-junction-chain',
+  name: 'MOSFET Junction Chain',
+  category: 'thermal',
+  inputs: {
+    powerWatts: 4.0,
+    ambientTempC: 30,
+    rThetaJc: 1.5,
+    rThetaCs: 0.5,
+    rThetaSa: 5.0,
+    maxJunctionTempC: 125,
+  },
+  outputs: {},
+});
+const evalThmSnap = recalculateSnapshot(thmSnap);
+assert(evalThmSnap.outputs.junctionTempC === 58 && evalThmSnap.margins[0].marginAbsolute === 67, 'Workspace/09: Snapshot orchestrator evaluates junction thermal chain with 67°C margin headroom');
+
+// Workspace/10: Battery-to-Load Sizing Orchestration
+const battSnap = createSnapshotFromCalculation({
+  toolSlug: 'battery-system-design',
+  engineId: 'battery-to-load',
+  name: 'Field Autonomy Sizing',
+  category: 'battery',
+  inputs: {
+    dailyLoadWh: 20,
+    autonomyDays: 2.0,
+    converterEfficiencyPercent: 90,
+    systemNominalVoltage: 12,
+  },
+  outputs: {},
+});
+const evalBattSnap = recalculateSnapshot(battSnap);
+assert(evalBattSnap.outputs.deliveredLoadEnergyWh === 40 && evalBattSnap.outputs.grossRequiredStorageWh > 40, 'Workspace/10: Snapshot orchestrator evaluates battery-to-load sizing using locked Phase 11/12 engine');
+
+// Workspace/11: Multi-Case Comparison Matrix & Margin Deltas
+wsProj.designCases[0].calculationSnapshots = [evalDcSnap, evalThmSnap];
+const modThmSnap = recalculateSnapshot(thmSnap, { powerWatts: 2.0 }); // Lower power in Case B -> higher margin!
+revBCase.calculationSnapshots = [evalDcSnap, modThmSnap];
+const comparisonResult = compareDesignCases(wsProj);
+assert(comparisonResult.cases.length === 2 && comparisonResult.margins.length >= 2, 'Workspace/11: Multi-case comparison matrix aligns margins across baseline and Rev B');
+assert(comparisonResult.verdict[revBCase.id] === 'IMPROVED' || comparisonResult.verdict[revBCase.id] === 'EQUAL', 'Workspace/12: Comparison engine computes margin deltas and assigns comparative engineering verdict');
+
+// Workspace/13: Hardware & Lab Validation Tracking
+const valItem = addValidationItem(wsProj, 'Measure output voltage ripple with AC coupling', 'prototype', true);
+assert(valItem.status === 'Unvalidated', 'Workspace/13: Validation tracker initializes milestone in Unvalidated state');
+updateValidationItem(wsProj, valItem.id, { status: 'Hardware Validated' });
+const progress = getValidationProgress(wsProj);
+assert(progress.hardwareValidated >= 1 && progress.percentComplete > 0, 'Workspace/14: Validation progress computes weighted completion score');
+
+// Workspace/15: Lab Measurement Delta & % Error Computation
+const measComp = compareMeasurementWithCalculated(5.0, 5.04, 'Vout DC', 'V', 5.0);
+assert(measComp.isWithinTolerance && measComp.percentageError < 1.0, 'Workspace/15: Lab measurement comparison computes absolute delta and verifies within-tolerance threshold');
+
+// Workspace/16: Manufacturer Part Cross-Reference
+const mfrPart = addManufacturerPart(wsProj, {
+  componentRef: 'L2',
+  parameter: 'Inductance & DCR',
+  value: '4.7 µH, 15 mΩ',
+  unit: 'µH',
+  manufacturer: 'Bourns',
+  partNumber: 'SRP6540-4R7M',
+});
+setManufacturerVerification(wsProj, mfrPart.id, true);
+assert(wsProj.manufacturerData.some(p => p.id === mfrPart.id && p.verified), 'Workspace/16: Manufacturer part verification tracker records component datasheet validation');
+
+// Workspace/17: Project Revision Digest & History
+const rev = createProjectRevision(wsProj, 'Formal engineering audit baseline', 'Chief Engineer');
+assert(rev.revisionNumber >= 2 && rev.snapshotDigest.length > 5, 'Workspace/17: Project revision manager creates immutable audit digests');
+
+// Workspace/18: System Design Review Report Synthesis
+const mdReport = generateMarkdownReport(wsProj);
+assert(mdReport.includes('# Engineering Design Review') && mdReport.includes('Requirements Compliance Matrix'), 'Workspace/18: System design review report generates complete formatted markdown audit');
+const reportStats = generateReportSummary(wsProj);
+assert(reportStats.readinessVerdict === 'PASS_SATISFIED' && reportStats.totalRequirements >= 3, 'Workspace/19: Report summary evaluates system readiness verdict and requirements compliance');
+
+// Workspace/20: BYO AI Intelligence Layer & Offline Deterministic Review
+const offlineReview = runDeterministicOfflineReview('critique', wsProj, evalDcSnap);
+assert(offlineReview.offlineFallback && offlineReview.content.includes('Parasitic Elements') && offlineReview.providerUsed === 'offline', 'Workspace/20: Intelligence layer provides instant deterministic offline engineering review without external network/keys');
 
 
 console.log('\n======================================================');

@@ -2,11 +2,12 @@
 
 > **100% Client-Side Precision Calculators, Multi-Domain System Design Workflows, Standards-Aware Engineering Primers, and Comprehensive Formula References.**
 
+![Version](https://img.shields.io/badge/Version-v1.0.0-cyan?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=flat-square&logo=typescript)
 ![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff?style=flat-square&logo=vite)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=flat-square&logo=tailwindcss)
-![Tests](https://img.shields.io/badge/Tests-574%20Passing-emerald?style=flat-square)
+![Tests](https://img.shields.io/badge/Tests-641%20Passing-emerald?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-amber?style=flat-square)
 
 ---
@@ -19,9 +20,64 @@ ElectroKit bridges the gap between quick scratchpad calculations and heavy SPICE
 
 ---
 
+## 🏛️ System Architecture
+
+### 1. Deterministic Calculation Flow
+```
+User Input (Browser)
+       │
+       ▼
+ElectroKit Responsive UI (React 19 / TypeScript)
+       │
+       ▼
+Reusable Analytical Calculation Engines (Pure Deterministic Functions)
+       │
+       ▼
+Engineering Verification (Bounds, SI Units, E-Series, Thermal Deratings)
+       │
+       ▼
+Authoritative Results, Margins & Formula Derivations
+```
+
+### 2. Engineering Workspace Flow
+```
+Workspace Project Specification
+       │
+       ▼
+Requirements & Constraints Registers
+       │
+       ▼
+Multi-Case Branching (Baseline vs Rev B) & Corner Scenarios
+       │
+       ▼
+Calculation Snapshots (Pinned Deterministic Results & Headroom Margins)
+       │
+       ▼
+Hardware Validation (Lab Bench Measurements vs Modeled Deviations)
+       │
+       ▼
+Synthesized System Design Review (Markdown, Printable HTML, JSON)
+```
+
+### 3. Optional Intelligence Layer (BYO AI)
+```
+User-Configured Provider (Gemini / OpenAI / Anthropic / Local Ollama)
+       │
+       ▼
+Context Minimization (Selected Calculation Snapshot / Parameters Only)
+       │
+       ▼
+AI Peer Review (Explains Physical Principles & Proposes Bench Tests)
+       │
+       ▼
+Deterministic ElectroKit Engines Remain Sole Source of Numerical Truth
+```
+
+---
+
 ## 🚀 Key Modules & Capabilities
 
-ElectroKit organizes over **80+ specialized engineering calculators and workflows** across 15 distinct categories:
+ElectroKit organizes **86 specialized engineering calculators and workflows** across 15 distinct categories:
 
 ### 1. 🔌 Circuit Calculators
 - **Ohm's Law Solver** — DC voltage, current, resistance, power with E24 standard matching.
@@ -106,6 +162,26 @@ ElectroKit organizes over **80+ specialized engineering calculators and workflow
 - **PCB System Integration** — Combined power integrity, trace ampacity, impedance match, and DRC layout readiness.
 - **Design Review & Report Synthesizer** — Formal Engineering Design Review with active assumption registers, centralized warnings, and auditable traceability matrices.
 
+### 12. 💼 Engineering Workspace & Intelligence Layer (Phase 13)
+- **Core Principle** — *"Workspace orchestrates. Engines calculate. AI explains and reviews."*
+- **Project Specifications** — Comprehensive capture of requirements, constraints, assumptions, and design targets.
+- **Design Case & Corner Scenarios** — Multi-case branching (Baseline, Rev B), parameter overrides, and environmental corners (Worst-case hot, cold, low voltage, battery EOL).
+- **Calculation Snapshots** — Pinning calculation snapshots with deterministic outputs and margins directly to design cases.
+- **Hardware Validation Tracker** — Lifecycle tracking (Unvalidated → Calculated → Reviewed → Hardware Validated → Datasheet Verified) with lab measurement comparison and error calculation.
+- **System Design Reports** — One-click generation of formatted Markdown reports and styled printable HTML reviews.
+- **Bring-Your-Own-AI (BYO AI)** — Optional, client-side peer reviewer supporting Google Gemini, OpenAI, Anthropic Claude, and Ollama/Local LLMs.
+- **Deterministic Offline Review** — High-value, instantaneous physical principle explanations and testing procedures without external network access or API keys.
+- **Credential Security Guarantee** — Zero AI credentials in project export files, reports, or logs. Keys are stored strictly client-side in dedicated storage.
+
+---
+
+## 🔒 Third-Party AI Provider Disclaimer
+
+When using the optional Bring-Your-Own-AI (BYO AI) intelligence features:
+- Third-party AI providers (Google, OpenAI, Anthropic, Ollama) operate under their own independent terms of service, pricing, privacy policies, data retention terms, and rate limits.
+- ElectroKit connects directly from your browser to the designated provider endpoint using your configured key; no server or proxy is operated by ElectroKit.
+- ElectroKit deterministic calculation engines are 100% offline and do NOT depend on external AI availability.
+
 ---
 
 ## 🛠️ Technology Stack
@@ -122,7 +198,7 @@ ElectroKit organizes over **80+ specialized engineering calculators and workflow
 
 ## 🧪 Verification & Audit Suite
 
-ElectroKit includes an extensive automated verification test suite containing **574 analytical assertions**:
+ElectroKit includes an extensive automated verification test suite containing **594 master analytical assertions**, **29 dedicated Phase 13 forensic assertions**, and **18 release hardening assertions** (**641 total assertions**, 0 failures):
 
 ```bash
 # Run the complete engineering verification test suite
@@ -216,6 +292,16 @@ electrokit/
 ├── tsconfig.json
 └── vite.config.ts
 ```
+
+---
+
+## 🔒 Privacy & Data Confidentiality
+
+- **Deterministic Calculations:** All 86 engineering calculators, equations, and margin audits run **100% locally in your browser**. No parameters or calculation values are ever transmitted to any remote server.
+- **Project Storage:** Engineering projects, design cases, and validation records are saved exclusively to local browser storage (`localStorage`) on your device.
+- **AI Context Minimization:** If you choose to configure an optional third-party AI provider, only the explicitly selected calculation or project snapshot is sent to that provider's API.
+- **API Key Confidentiality:** AI keys are stored in an isolated storage namespace and are **never** included in project JSON exports, Markdown reports, or printed summaries.
+- **Zero Telemetry:** ElectroKit contains no analytics trackers, advertising pixels, or telemetry beacons.
 
 ---
 

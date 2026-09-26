@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CATEGORIES } from '../../data/taxonomy';
 import { TOOLS_REGISTRY } from '../../data/registry';
 import {
@@ -16,9 +16,11 @@ import {
   Sigma,
   BookOpen,
   BookMarked,
+  Briefcase,
   ChevronDown,
   ChevronRight,
   Sparkles,
+  Star,
   X,
 } from 'lucide-react';
 
@@ -46,6 +48,7 @@ const CATEGORY_ICON_MAP: Record<string, React.ElementType> = {
   math: Sigma,
   reference: BookOpen,
   formulas: BookMarked,
+  design: Briefcase,
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -59,13 +62,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Track open categories accordion state
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
     circuit: true,
-    components: true,
-    batteries: true,
-    electrical: true,
-    rf: true,
-    digital: true,
-    embedded: true,
+    design: true,
   });
+
+  const [showAllQuickTools, setShowAllQuickTools] = useState(false);
+
+  // Auto-expand category containing the active tool
+  useEffect(() => {
+    const currentTool = TOOLS_REGISTRY.find((t) => t.id === activeToolId);
+    if (currentTool?.category) {
+      setOpenCategories((prev) => ({
+        ...prev,
+        [currentTool.category]: true,
+      }));
+    }
+  }, [activeToolId]);
 
   const toggleCategory = (catId: string) => {
     setOpenCategories((prev) => ({
@@ -73,6 +84,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       [catId]: !prev[catId],
     }));
   };
+
+  const favoriteTools = TOOLS_REGISTRY.filter((t) => favorites.includes(t.id));
+  const quickList = favoriteTools.length > 0 
+    ? favoriteTools 
+    : TOOLS_REGISTRY.slice(0, 6);
+
+  const displayedQuickTools = showAllQuickTools ? TOOLS_REGISTRY : quickList;
 
   const content = (
     <div className="h-full flex flex-col justify-between overflow-y-auto py-4 px-3">
@@ -85,26 +103,41 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             type="button"
             onClick={onCloseMobile}
+            aria-label="Close navigation sidebar"
             className="p-1 rounded text-slate-400 hover:text-slate-200"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Phase 01 Quick Launcher */}
+        {/* Quick Access / Starred Tools */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between px-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             <span className="flex items-center gap-1.5 text-cyan-400">
-              <Sparkles className="w-3.5 h-3.5" />
-              Phase 01 Active Tools
+              {favoriteTools.length > 0 ? (
+                <>
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  Starred Favorites
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Quick Access
+                </>
+              )}
             </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/40">
-              {TOOLS_REGISTRY.length}
-            </span>
+            <button
+              type="button"
+              onClick={() => setShowAllQuickTools(!showAllQuickTools)}
+              aria-label="Toggle show all tools list"
+              className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/40 hover:bg-cyan-900/60 cursor-pointer"
+            >
+              {showAllQuickTools ? 'Compact' : `${TOOLS_REGISTRY.length} Tools`}
+            </button>
           </div>
 
           <div className="flex flex-col gap-0.5 mt-1">
-            {TOOLS_REGISTRY.map((tool) => {
+            {displayedQuickTools.map((tool) => {
               const isActive = activeToolId === tool.id;
               const isFav = favorites.includes(tool.id);
 
@@ -128,6 +161,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       e.stopPropagation();
                       onToggleFavorite(tool.id);
                     }}
+                    aria-label={isFav ? `Remove ${tool.name} from favorites` : `Add ${tool.name} to favorites`}
                     className={`text-[11px] p-0.5 rounded hover:text-amber-400 transition-colors ${
                       isFav ? 'text-amber-400' : 'text-slate-600 opacity-0 group-hover:opacity-100'
                     }`}
@@ -140,10 +174,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* 14 Domain Taxonomy Categories */}
+        {/* Domain Taxonomy Categories */}
         <div className="flex flex-col gap-2 pt-3 border-t border-slate-800/80">
           <div className="px-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-            Domain Taxonomy (14 Categories)
+            Domain Taxonomy ({CATEGORIES.length} Categories)
           </div>
 
           <div className="flex flex-col gap-1">
@@ -157,7 +191,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <button
                     type="button"
                     onClick={() => toggleCategory(cat.id)}
-                    className="w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs text-slate-300 hover:bg-slate-800/50 transition-colors"
+                    aria-expanded={isOpen}
+                    aria-label={`Toggle ${cat.name} category`}
+                    className="w-full px-2.5 py-1.5 rounded-lg flex items-center justify-between text-xs text-slate-300 hover:bg-slate-800/50 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       <span className="text-[10px] font-mono text-cyan-500 font-bold">
@@ -191,7 +227,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             onSelectTool(t.id);
                             onCloseMobile();
                           }}
-                          className={`text-left text-xs py-1 px-2 rounded truncate transition-colors ${
+                          className={`text-left text-xs py-1 px-2 rounded truncate transition-colors cursor-pointer ${
                             activeToolId === t.id
                               ? 'text-cyan-400 font-semibold bg-cyan-950/40'
                               : 'text-slate-400 hover:text-slate-200'

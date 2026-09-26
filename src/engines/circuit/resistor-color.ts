@@ -160,7 +160,7 @@ export function calculateResistorFromColor(inputs: ResistorColorInputs): Calcula
       tolerance: {
         label: 'Tolerance',
         value: `±${tolerancePercent}%`,
-        note: `Guaranteed range: ${formatQuantity(minR, 'resistance')} to ${formatQuantity(maxR, 'resistance')}`,
+        note: `Specified tolerance range: ${formatQuantity(minR, 'resistance')} to ${formatQuantity(maxR, 'resistance')}`,
       },
       minVal: {
         label: 'Minimum Resistance',

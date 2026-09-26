@@ -19,6 +19,14 @@ xml += '    <changefreq>daily</changefreq>\n';
 xml += '    <priority>1.0</priority>\n';
 xml += '  </url>\n\n';
 
+// Workspace View
+xml += '  <url>\n';
+xml += `    <loc>${baseUrl}/#/workspace</loc>\n`;
+xml += `    <lastmod>${now}</lastmod>\n`;
+xml += '    <changefreq>daily</changefreq>\n';
+xml += '    <priority>0.95</priority>\n';
+xml += '  </url>\n\n';
+
 // Formulas View
 xml += '  <url>\n';
 xml += `    <loc>${baseUrl}/#/formulas</loc>\n`;
@@ -35,7 +43,7 @@ xml += '    <changefreq>weekly</changefreq>\n';
 xml += '    <priority>0.9</priority>\n';
 xml += '  </url>\n\n';
 
-let txt = `${baseUrl}/\n${baseUrl}/#/formulas\n${baseUrl}/#/taxonomy\n`;
+let txt = `${baseUrl}/\n${baseUrl}/#/workspace\n${baseUrl}/#/formulas\n${baseUrl}/#/taxonomy\n`;
 
 for (const tool of TOOLS_REGISTRY) {
   const priority = ['circuit', 'power', 'design', 'pcb'].includes(tool.category) ? '0.85' : '0.80';
