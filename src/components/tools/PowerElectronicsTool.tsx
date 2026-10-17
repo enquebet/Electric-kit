@@ -55,10 +55,30 @@ import {
   Compass,
 } from 'lucide-react';
 
-export const PowerElectronicsTool: React.FC = () => {
+interface PowerElectronicsToolProps {
+  activeToolId?: string;
+}
+
+export const PowerElectronicsTool: React.FC<PowerElectronicsToolProps> = ({ activeToolId }) => {
+  const getInitialTab = () => {
+    if (activeToolId === 'ac-dc-rectifiers') return 'rectifiers';
+    if (activeToolId === 'inverters-spwm') return 'inverters';
+    if (activeToolId === 'semiconductor-loss') return 'semiconductors';
+    if (activeToolId === 'converter-design-mode') return 'design-mode';
+    return 'converters';
+  };
+
   const [activeTab, setActiveTab] = useState<
     'converters' | 'rectifiers' | 'inverters' | 'semiconductors' | 'design-mode'
-  >('converters');
+  >(getInitialTab);
+
+  React.useEffect(() => {
+    if (activeToolId === 'ac-dc-rectifiers') setActiveTab('rectifiers');
+    else if (activeToolId === 'inverters-spwm') setActiveTab('inverters');
+    else if (activeToolId === 'semiconductor-loss') setActiveTab('semiconductors');
+    else if (activeToolId === 'converter-design-mode') setActiveTab('design-mode');
+    else if (activeToolId === 'power-converters') setActiveTab('converters');
+  }, [activeToolId]);
 
   // Sub-selector for converters
   const [converterType, setConverterType] = useState<

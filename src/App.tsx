@@ -5,6 +5,7 @@ import { SearchModal } from './components/search/SearchModal';
 import { FormulaBookView } from './components/formulas/FormulaBookView';
 import { TaxonomyExplorerView } from './components/taxonomy/TaxonomyExplorerView';
 import { WorkspaceView } from './workspace/WorkspaceView';
+import { EcosystemView } from './components/ecosystem/EcosystemView';
 
 import { OhmsLawTool } from './components/tools/OhmsLawTool';
 import { ElectricalPowerTool } from './components/tools/ElectricalPowerTool';
@@ -99,7 +100,7 @@ import { loadPreferences, savePreferences } from './lib/storage/local';
 import { Sparkles, ArrowRight, Share2, Check, Briefcase } from 'lucide-react';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<'tool' | 'formulas' | 'taxonomy' | 'workspace'>('tool');
+  const [activeView, setActiveView] = useState<'tool' | 'formulas' | 'taxonomy' | 'workspace' | 'ecosystem'>('tool');
   const [activeToolId, setActiveToolId] = useState<string>('ohms-law');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -119,6 +120,8 @@ export default function App() {
         setActiveView('taxonomy');
       } else if (hash === 'workspace') {
         setActiveView('workspace');
+      } else if (hash === 'ecosystem') {
+        setActiveView('ecosystem');
       } else if (hash && getToolBySlug(hash)) {
         setActiveToolId(hash);
         setActiveView('tool');
@@ -156,6 +159,10 @@ export default function App() {
       title = "Engineering Workspace & Intelligence Layer | ElectroKit";
       description = "Unified hardware engineering workspace: design cases, deterministic calculation snapshots, margin audits, and hardware validation.";
       canonical += '#/workspace';
+    } else if (activeView === 'ecosystem') {
+      title = "Our Ecosystem & Technology Partner | Made with cortexitsolution.com";
+      description = "Explore the engineering ecosystem powered by Cortex IT Solution (cortexitsolution.com) — Full site breakdown, 8 core services, 10 industry verticals, portfolio, and startup MVP acceleration.";
+      canonical += '#/ecosystem';
     } else if (activeTool) {
       title = activeTool.seo?.title || `${activeTool.name} — Precision Calculator | ElectroKit`;
       description = activeTool.seo?.metaDescription || activeTool.description;
@@ -198,11 +205,12 @@ export default function App() {
     savePreferences({ recentToolIds: updatedRecents });
   };
 
-  const handleSelectView = (view: 'tool' | 'formulas' | 'taxonomy' | 'workspace') => {
+  const handleSelectView = (view: 'tool' | 'formulas' | 'taxonomy' | 'workspace' | 'ecosystem') => {
     setActiveView(view);
     if (view === 'formulas') window.location.hash = '#/formulas';
     else if (view === 'taxonomy') window.location.hash = '#/taxonomy';
     else if (view === 'workspace') window.location.hash = '#/workspace';
+    else if (view === 'ecosystem') window.location.hash = '#/ecosystem';
     else window.location.hash = `#/${activeToolId}`;
   };
 
@@ -234,18 +242,26 @@ export default function App() {
 
       {/* Main Workspace Frame */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Navigation Sidebar */}
-        <Sidebar
-          activeToolId={activeToolId}
-          onSelectTool={handleSelectTool}
-          isOpenMobile={isMobileSidebarOpen}
-          onCloseMobile={() => setIsMobileSidebarOpen(false)}
-          favorites={favorites}
-          onToggleFavorite={handleToggleFavorite}
-        />
+        {/* Navigation Sidebar (hidden in full workbench & ecosystem mode) */}
+        {activeView !== 'workspace' && activeView !== 'ecosystem' && (
+          <Sidebar
+            activeToolId={activeToolId}
+            onSelectTool={handleSelectTool}
+            isOpenMobile={isMobileSidebarOpen}
+            onCloseMobile={() => setIsMobileSidebarOpen(false)}
+            favorites={favorites}
+            onToggleFavorite={handleToggleFavorite}
+          />
+        )}
 
         {/* Dynamic Center Work Area */}
-        <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto w-full">
+        <main
+          className={`flex-1 ${
+            activeView === 'workspace'
+              ? 'overflow-hidden flex flex-col p-0 max-w-none'
+              : 'overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl mx-auto'
+          } w-full`}
+        >
           {activeView === 'formulas' && (
             <FormulaBookView onSelectTool={handleSelectTool} />
           )}
@@ -256,6 +272,10 @@ export default function App() {
 
           {activeView === 'workspace' && (
             <WorkspaceView />
+          )}
+
+          {activeView === 'ecosystem' && (
+            <EcosystemView onNavigateToTools={() => handleSelectView('tool')} />
           )}
 
           {activeView === 'tool' && (

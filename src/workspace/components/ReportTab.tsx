@@ -34,14 +34,33 @@ export const ReportTab: React.FC<ReportTabProps> = ({ project }) => {
 
   const handlePrint = () => {
     const html = generateHtmlPrintableReport(project);
-    const printWindow = window.open('', '_blank');
-    if (printWindow) {
-      printWindow.document.write(html);
-      printWindow.document.close();
-      printWindow.focus();
-      setTimeout(() => {
-        printWindow.print();
-      }, 300);
+    try {
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+        }, 300);
+      } else {
+        // Fallback for iframe environments / popup blockers: download printable HTML
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${project.metadata.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-report.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch {
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${project.metadata.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-report.html`;
+      a.click();
+      URL.revokeObjectURL(url);
     }
   };
 

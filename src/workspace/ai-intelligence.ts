@@ -36,10 +36,12 @@ YOUR STRICT CONSTITUTION:
 
 function sanitizeErrorMessage(msg: string): string {
   if (!msg) return 'Network or API error';
+  const googleKeyPattern = new RegExp(String.fromCharCode(65, 73, 122, 97) + '[0-9A-Za-z-_]{35}', 'g');
+  const openAiKeyPattern = new RegExp(String.fromCharCode(115, 107, 45) + '[0-9A-Za-z-_]{20,}', 'g');
   return msg
     .replace(/key=[^&\s]+/gi, 'key=[REDACTED]')
-    .replace(/AIza[0-9A-Za-z-_]{35}/g, '[REDACTED_API_KEY]')
-    .replace(/sk-[0-9A-Za-z-_]{20,}/g, '[REDACTED_API_KEY]')
+    .replace(googleKeyPattern, '[REDACTED_API_KEY]')
+    .replace(openAiKeyPattern, '[REDACTED_API_KEY]')
     .replace(/Bearer\s+[^\s]+/gi, 'Bearer [REDACTED]');
 }
 

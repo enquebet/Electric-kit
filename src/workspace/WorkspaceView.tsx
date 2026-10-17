@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { V2Workspace } from './v2';
 import { ElectroKitProject, ProjectStatus, CalculationSnapshot } from './types';
 import {
   getAllProjects,
@@ -33,6 +34,7 @@ import {
 } from 'lucide-react';
 
 export const WorkspaceView: React.FC = () => {
+  const [useLegacyV1, setUseLegacyV1] = useState(false);
   const [project, setProject] = useState<ElectroKitProject>(getActiveProject());
   const [allProjects, setAllProjects] = useState<ElectroKitProject[]>(getAllProjects());
   const [activeTab, setActiveTab] = useState<'specs' | 'cases' | 'snapshots' | 'validation' | 'report' | 'ai'>('specs');
@@ -42,6 +44,10 @@ export const WorkspaceView: React.FC = () => {
   const [revisionAuthor, setRevisionAuthor] = useState('');
   const [importError, setImportError] = useState<string | null>(null);
   const [selectedSnapshotForAi, setSelectedSnapshotForAi] = useState<CalculationSnapshot | undefined>();
+
+  if (!useLegacyV1) {
+    return <V2Workspace />;
+  }
 
   useEffect(() => {
     const p = getActiveProject();

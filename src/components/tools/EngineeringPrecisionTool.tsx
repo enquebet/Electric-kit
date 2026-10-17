@@ -15,10 +15,19 @@ import { ResultCard } from '../common/ResultCard';
 import { CalculationStepViewer } from '../common/CalculationStepViewer';
 import { Hash, Percent, Shuffle, ArrowRightLeft, Compass } from 'lucide-react';
 
-export function EngineeringPrecisionTool() {
+interface EngineeringPrecisionToolProps {
+  activeToolId?: string;
+}
+
+export function EngineeringPrecisionTool({ activeToolId }: EngineeringPrecisionToolProps = {}) {
   const [activeTab, setActiveTab] = useState<
     'notation' | 'sigfigs' | 'percent_diff' | 'percent_error' | 'ratios' | 'prefixes' | 'rounding'
-  >('notation');
+  >(() => (activeToolId === 'scientific-prefixes' ? 'prefixes' : 'notation'));
+
+  React.useEffect(() => {
+    if (activeToolId === 'scientific-prefixes') setActiveTab('prefixes');
+    else if (activeToolId === 'engineering-precision') setActiveTab('notation');
+  }, [activeToolId]);
 
   // 1. Notation State
   const [numInput, setNumInput] = useState<number>(0.000047);

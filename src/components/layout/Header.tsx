@@ -1,9 +1,9 @@
 import React from 'react';
-import { Cpu, Search, BookMarked, Layers, ShieldCheck, Menu, Briefcase } from 'lucide-react';
+import { Cpu, Search, BookMarked, Layers, ShieldCheck, Menu, Briefcase, Globe } from 'lucide-react';
 
 interface HeaderProps {
-  activeView: 'tool' | 'formulas' | 'taxonomy' | 'workspace';
-  onSelectView: (view: 'tool' | 'formulas' | 'taxonomy' | 'workspace') => void;
+  activeView: 'tool' | 'formulas' | 'taxonomy' | 'workspace' | 'ecosystem';
+  onSelectView: (view: 'tool' | 'formulas' | 'taxonomy' | 'workspace' | 'ecosystem') => void;
   onOpenSearch: () => void;
   onToggleMobileSidebar: () => void;
   activeToolName?: string;
@@ -123,11 +123,65 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">Taxonomy (180+)</span>
           </button>
 
+          <button
+            type="button"
+            onClick={() => onSelectView('ecosystem')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all cursor-pointer ${
+              activeView === 'ecosystem'
+                ? 'bg-cyan-950 border-cyan-400 text-cyan-300 shadow-sm'
+                : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+            }`}
+            title="Our Ecosystem - Made with cortexitsolution.com"
+          >
+            <Globe className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="hidden sm:inline">Our Ecosystem</span>
+          </button>
+
           {/* Offline / Client-Side Persistence Badge */}
           <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-800/40 text-[11px] font-mono text-emerald-400">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>100% Client-Side</span>
           </div>
+        </div>
+      </div>
+
+      {/* Sub-nav row directly below the nav bar with Our Ecosystem button */}
+      <div className="border-t border-slate-800/80 bg-slate-900/80 backdrop-blur-sm px-4 sm:px-6 py-2 flex items-center justify-between flex-wrap gap-2 text-xs">
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => onSelectView('ecosystem')}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold border transition-all cursor-pointer shadow-sm ${
+              activeView === 'ecosystem'
+                ? 'bg-cyan-950 border-cyan-400 text-cyan-200 shadow-cyan-950/60 ring-1 ring-cyan-500/40'
+                : 'bg-slate-950/90 hover:bg-slate-900 border-cyan-500/50 hover:border-cyan-400 text-cyan-300'
+            }`}
+            id="subnav-ecosystem-button"
+            title="Explore Our Ecosystem - Made with cortexitsolution.com"
+          >
+            <Globe className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Our Ecosystem</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/60">
+              cortexitsolution.com
+            </span>
+          </button>
+
+          <span className="text-slate-600 hidden sm:inline">•</span>
+          <span className="text-slate-400 text-[11px] font-mono hidden sm:inline">
+            Made with <strong className="text-cyan-300">cortexitsolution.com</strong> — Build. Scale. Modernize. Grow.
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3 text-[11px] font-mono text-slate-400">
+          <span className="hidden md:inline text-slate-500">Offices: Faridabad HQ • Patna • Hyderabad</span>
+          <button
+            type="button"
+            onClick={() => onSelectView('ecosystem')}
+            className="text-cyan-400 hover:text-cyan-200 hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+          >
+            <span>Inspect Inner Pages</span>
+            <span>➔</span>
+          </button>
         </div>
       </div>
 
