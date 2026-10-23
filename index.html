@@ -14,6 +14,7 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="google-site-verification" content="GSC_ELECTROKIT_ENGINEERING_AUDIT_VERIFIED" />
     <link rel="canonical" href="https://electrokit.dev/" />
 
     <!-- OpenGraph Social Metadata -->
@@ -143,6 +144,103 @@
               "position": 8,
               "name": "System Engineering Design Review",
               "url": "https://electrokit.dev/#/system-design-review"
+            }
+          ]
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://electrokit.dev/#organization",
+          "name": "ElectroKit Engineering & Cortex IT Solution",
+          "url": "https://electrokit.dev/",
+          "logo": "https://electrokit.dev/favicon.svg",
+          "sameAs": [
+            "https://cortexitsolution.com",
+            "https://github.com/cortexitsolution",
+            "https://muskankumar.in"
+          ],
+          "founder": [
+            {
+              "@type": "Person",
+              "name": "Beauty Kumari",
+              "jobTitle": "Founder & CEO"
+            },
+            {
+              "@type": "Person",
+              "name": "Muskan Kumar",
+              "jobTitle": "Co-Founder & Engineering Lead"
+            }
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+91-8368710629",
+            "contactType": "technical support",
+            "email": "cortexitsolution1@gmail.com",
+            "availableLanguage": ["English", "Hindi"]
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://electrokit.dev/#breadcrumbs",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://electrokit.dev/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Engineering Workspace",
+              "item": "https://electrokit.dev/#/workspace"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Calculators & Tools",
+              "item": "https://electrokit.dev/#/taxonomy"
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "name": "Ecosystem",
+              "item": "https://electrokit.dev/#/ecosystem"
+            },
+            {
+              "@type": "ListItem",
+              "position": 5,
+              "name": "SEO Checklist & Audit",
+              "item": "https://electrokit.dev/#/seo-checklist"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://electrokit.dev/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How is PCB trace width calculated according to IPC-2152?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "IPC-2152 determines trace ampacity using empirical thermal cross-section curves: Area = (Current / (k * (TempRise)^b))^(1/c), taking into account internal vs external copper layer thermal dissipation and copper thickness (1oz/2oz)."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is Peukert's Law and how does it affect battery runtime?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Peukert's Law (t = H * (C / (I * H))^k) calculates the non-linear decrease in usable battery capacity at higher discharge current rates, particularly critical for lead-acid and high-rate Li-ion packs."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why is 100% client-side calculation beneficial for hardware engineers?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Client-side computation guarantees zero latency, complete privacy for proprietary circuit schematics (no proprietary design parameters leave the browser), and offline reliability in laboratory settings."
+              }
             }
           ]
         }

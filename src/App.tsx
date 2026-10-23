@@ -6,6 +6,8 @@ import { FormulaBookView } from './components/formulas/FormulaBookView';
 import { TaxonomyExplorerView } from './components/taxonomy/TaxonomyExplorerView';
 import { WorkspaceView } from './workspace/WorkspaceView';
 import { EcosystemView } from './components/ecosystem/EcosystemView';
+import { SeoChecklistView } from './components/seo/SeoChecklistView';
+import { Breadcrumbs } from './components/common/Breadcrumbs';
 
 import { OhmsLawTool } from './components/tools/OhmsLawTool';
 import { ElectricalPowerTool } from './components/tools/ElectricalPowerTool';
@@ -100,7 +102,7 @@ import { loadPreferences, savePreferences } from './lib/storage/local';
 import { Sparkles, ArrowRight, Share2, Check, Briefcase } from 'lucide-react';
 
 export default function App() {
-  const [activeView, setActiveView] = useState<'tool' | 'formulas' | 'taxonomy' | 'workspace' | 'ecosystem'>('tool');
+  const [activeView, setActiveView] = useState<'tool' | 'formulas' | 'taxonomy' | 'workspace' | 'ecosystem' | 'seo-checklist'>('tool');
   const [activeToolId, setActiveToolId] = useState<string>('ohms-law');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -122,6 +124,8 @@ export default function App() {
         setActiveView('workspace');
       } else if (hash === 'ecosystem') {
         setActiveView('ecosystem');
+      } else if (hash === 'seo-checklist') {
+        setActiveView('seo-checklist');
       } else if (hash && getToolBySlug(hash)) {
         setActiveToolId(hash);
         setActiveView('tool');
@@ -163,6 +167,10 @@ export default function App() {
       title = "Our Ecosystem & Technology Partner | Made with cortexitsolution.com";
       description = "Explore the engineering ecosystem powered by Cortex IT Solution (cortexitsolution.com) — Full site breakdown, 8 core services, 10 industry verticals, portfolio, and startup MVP acceleration.";
       canonical += '#/ecosystem';
+    } else if (activeView === 'seo-checklist') {
+      title = "SEO Checklist & Search Engine Optimization Audit Suite | ElectroKit";
+      description = "Complete 35-point SEO checklist covering technical crawling, Core Web Vitals, Schema.org JSON-LD, SERP CTR optimization, and content topic clusters.";
+      canonical += '#/seo-checklist';
     } else if (activeTool) {
       title = activeTool.seo?.title || `${activeTool.name} — Precision Calculator | ElectroKit`;
       description = activeTool.seo?.metaDescription || activeTool.description;
@@ -205,12 +213,13 @@ export default function App() {
     savePreferences({ recentToolIds: updatedRecents });
   };
 
-  const handleSelectView = (view: 'tool' | 'formulas' | 'taxonomy' | 'workspace' | 'ecosystem') => {
+  const handleSelectView = (view: 'tool' | 'formulas' | 'taxonomy' | 'workspace' | 'ecosystem' | 'seo-checklist') => {
     setActiveView(view);
     if (view === 'formulas') window.location.hash = '#/formulas';
     else if (view === 'taxonomy') window.location.hash = '#/taxonomy';
     else if (view === 'workspace') window.location.hash = '#/workspace';
     else if (view === 'ecosystem') window.location.hash = '#/ecosystem';
+    else if (view === 'seo-checklist') window.location.hash = '#/seo-checklist';
     else window.location.hash = `#/${activeToolId}`;
   };
 
@@ -242,8 +251,8 @@ export default function App() {
 
       {/* Main Workspace Frame */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Navigation Sidebar (hidden in full workbench & ecosystem mode) */}
-        {activeView !== 'workspace' && activeView !== 'ecosystem' && (
+        {/* Navigation Sidebar (hidden in full workbench, ecosystem, and seo checklist mode) */}
+        {activeView !== 'workspace' && activeView !== 'ecosystem' && activeView !== 'seo-checklist' && (
           <Sidebar
             activeToolId={activeToolId}
             onSelectTool={handleSelectTool}
@@ -278,8 +287,21 @@ export default function App() {
             <EcosystemView onNavigateToTools={() => handleSelectView('tool')} />
           )}
 
+          {activeView === 'seo-checklist' && (
+            <SeoChecklistView />
+          )}
+
           {activeView === 'tool' && (
             <div className="flex flex-col gap-6 animate-in fade-in duration-200">
+              {/* Semantic Breadcrumbs (On-Page SEO) */}
+              <Breadcrumbs
+                items={[
+                  { label: 'Calculators', onClick: () => handleSelectView('taxonomy') },
+                  { label: activeTool.category.toUpperCase(), onClick: () => handleSelectView('taxonomy') },
+                  { label: activeTool.name, active: true },
+                ]}
+              />
+
               {/* Tool Header Banner */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-5 border-b border-slate-800/80">
                 <div className="flex flex-col gap-1.5">
@@ -300,6 +322,15 @@ export default function App() {
                   <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
                     {activeTool.description}
                   </p>
+
+                  {/* 2-line quick summary box (Google Featured Snippet & Answer Intent) */}
+                  <div className="flex items-start gap-2.5 p-3 rounded-xl bg-cyan-950/30 border border-cyan-800/40 text-xs font-mono text-cyan-200 mt-1">
+                    <span className="font-bold text-cyan-400 shrink-0">TL;DR:</span>
+                    <p className="leading-relaxed">
+                      {activeTool.name} computes deterministic engineering parameters conforming to {activeTool.formulaSnippet}.
+                      All calculations execute 100% in-browser with zero latency, full privacy, and verified numerical stability.
+                    </p>
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">

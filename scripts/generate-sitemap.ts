@@ -43,7 +43,23 @@ xml += '    <changefreq>weekly</changefreq>\n';
 xml += '    <priority>0.9</priority>\n';
 xml += '  </url>\n\n';
 
-let txt = `${baseUrl}/\n${baseUrl}/#/workspace\n${baseUrl}/#/formulas\n${baseUrl}/#/taxonomy\n`;
+// Ecosystem View (Cortex IT Solution)
+xml += '  <url>\n';
+xml += `    <loc>${baseUrl}/#/ecosystem</loc>\n`;
+xml += `    <lastmod>${now}</lastmod>\n`;
+xml += '    <changefreq>weekly</changefreq>\n';
+xml += '    <priority>0.85</priority>\n';
+xml += '  </url>\n\n';
+
+// SEO Checklist & Audit Suite
+xml += '  <url>\n';
+xml += `    <loc>${baseUrl}/#/seo-checklist</loc>\n`;
+xml += `    <lastmod>${now}</lastmod>\n`;
+xml += '    <changefreq>weekly</changefreq>\n';
+xml += '    <priority>0.85</priority>\n';
+xml += '  </url>\n\n';
+
+let txt = `${baseUrl}/\n${baseUrl}/#/workspace\n${baseUrl}/#/formulas\n${baseUrl}/#/taxonomy\n${baseUrl}/#/ecosystem\n${baseUrl}/#/seo-checklist\n`;
 
 for (const tool of TOOLS_REGISTRY) {
   const priority = ['circuit', 'power', 'design', 'pcb'].includes(tool.category) ? '0.85' : '0.80';

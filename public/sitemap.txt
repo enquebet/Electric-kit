@@ -2,6 +2,8 @@ https://electrokit.dev/
 https://electrokit.dev/#/workspace
 https://electrokit.dev/#/formulas
 https://electrokit.dev/#/taxonomy
+https://electrokit.dev/#/ecosystem
+https://electrokit.dev/#/seo-checklist
 https://electrokit.dev/#/ohms-law
 https://electrokit.dev/#/electrical-power
 https://electrokit.dev/#/voltage-divider
